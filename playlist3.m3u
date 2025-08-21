@@ -1,0 +1,161 @@
+#EXTM3U
+#EXTINF:-1,Arges TV (720p)
+https://btutzctahuf0wjoq.cdn.streamingserver.io/hls/yjvam8hlp2g3u08z02tv0yz66rq3cy.m3u8
+#EXTINF:-1,MBC Daegu (대구 MBC) (480p) [Not 24/7]
+https://5ee1ec6f32118.streamlock.net/live/livetv/playlist.m3u8
+#EXTINF:-1,Dena
+https://ncdn.telewebion.com/dena/live/playlist.m3u8
+#EXTINF:-1,MSG
+https://fl3.moveonjoy.com/MSG/index.m3u8
+#EXTINF:-1,TV Chile (1080p) [Geo-blocked]
+https://mdstrm.com/live-stream-playlist/533adcc949386ce765657d7c.m3u8
+#EXTINF:-1,Roya Kitchen (1080p)
+https://playlist.fasttvcdn.com/pl/toa2uuhhygheuly7xtuqrg/roya-kitchen/playlist.m3u8
+#EXTINF:-1,SUR TV
+https://redirector.rudo.video/hls-video/ey6283je82983je9823je8jowowiekldk9838274/surtv/surtv.smil/playlist.m3u8
+#EXTINF:-1,RSelvaTV
+https://live.obslivestream.com/selvatv/index.m3u8
+#EXTINF:-1,TV2 (1080p)
+https://live.mana2.my/Tv2/index.m3u8?auth_key=1745177833-e4f0090e3d3b4ed1b2b4f5df87a24d34-0-d43f8be1101f9bb00363d62de6514e4d&token=1745177833-e4f0090e3d3b4ed1b2b4f5df87a24d34-0-d43f8be1101f9bb00363d62de6514e4d
+#EXTINF:-1,TVCARiB Cinema (720p) [Not 24/7]
+https://cdn.mycloudstream.io/hls/live/broadcast/l3vslw4i/index.m3u8
+#EXTINF:-1,Canal 70 [Not 24/7]
+https://live20.bozztv.com/giatv/giatv-cnal70tv/cnal70tv/playlist.m3u8
+#EXTINF:-1,Rakuten TV Family Movies Italy (1080p)
+https://3315fc3e7276420f895e19cf807dbee1.mediatailor.eu-west-1.amazonaws.com/v1/master/0547f18649bd788bec7b67b746e47670f558b6b2/production-LiveChannel-6215/master.m3u8
+#EXTINF:-1,Serially Crime (720p)
+https://ixmediasrl-seriallycrime-1-it.rakuten.wurl.tv/playlist.m3u8
+#EXTINF:-1,Vevo Pop (1080p)
+https://amg00056-amg00056c6-rakuten-uk-3235.playouts.now.amagi.tv/playlist.m3u8
+#EXTINF:-1,FBI Files (720p)
+https://apollo.production-public.tubi.io/live/ac-the-fbi-files.m3u8
+#EXTINF:-1,RDS Social TV (720p)
+https://stream.rdstv.radio/out/v1/ec85f72b87f04555aa41d616d5be41dc/index.m3u8
+#EXTINF:-1,Telepace Trento (540p)
+https://5a1178b42cc03.streamlock.net/telepacetrento/telepacetrento/playlist.m3u8
+#EXTINF:-1,Canal I (720p)
+https://vcp10.myplaytv.com/canali/canali/playlist.m3u8
+#EXTINF:-1,Reyali (614p)
+https://eu1.servers10.com:8081/8090/index.m3u8
+#EXTINF:-1,Amazon Sat (1080p)
+https://amazonsat.brasilstream.com.br/hls/amazonsat/index.m3u8
+#EXTINF:-1,MBC Daegu (대구 MBC) (480p) [Not 24/7]
+https://5ee1ec6f32118.streamlock.net/live/livetv/playlist.m3u8
+#EXTINF:-1,AKC TV Meet The Breeds
+https://install.akctvcontrol.com/speed/broadcast/139/desktop-playlist.m3u8
+#EXTINF:-1,Baby Shark TV (720p)
+https://newidco-babysharktv-1-eu.rakuten.wurl.tv/playlist.m3u8
+#EXTINF:-1,NEW K.MOVIES (1080p)
+https://ec3b4b7e.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X05FV0tNT1ZJRVNfSExT/playlist.m3u8
+#EXTINF:-1,Wonder (720p)
+https://lds-wonder-samsungau.amagi.tv/playlist.m3u8
+#EXTINF:-1,2GB Sydney (1080p)
+https://2gblive.akamaized.net/hls/live/2033805/2GB/index.m3u8
+#EXTINF:-1,QVC UK Style (540p)
+https://qvcuk-live.akamaized.net/hls/live/2097112/qst/master.m3u8
+#EXTINF:-1,TV Centro Canal Regional (720p)
+https://amixtv.com:19360/tvcentro/tvcentro.m3u8
+#EXTINF:-1,RTL Télé Lëtzebuerg (1080p)
+https://live-edge.rtl.lu/channel1/smil:channel1/playlist.m3u8
+#EXTINF:-1,Canal 4 (720p) [Geo-blocked]
+https://alba-cr-repretel-c4.stream.mediatiquestream.com/index.m3u8
+#EXTINF:-1,Pluto TV BBC Food (720p)
+https://service-stitcher.clusters.pluto.tv/v1/stitch/embed/hls/channel/5fb5844bf5514d0007945bda/master.m3u8?advertisingId=channel&appName=rokuchannel&appVersion=1.0&bmodel=bm1&channel_id=channel&content=channel&content_rating=ROKU_ADS_CONTENT_RATING&content_type=livefeed&coppa=false&deviceDNT=1&deviceId=channel&deviceMake=rokuChannel&deviceModel=web&deviceType=rokuChannel&deviceVersion=1.0&embedPartner=rokuChannel&genre=ROKU_ADS_CONTENT_GENRE&is_lat=1&platform=web&rdid=channel&studio_id=viacom&tags=ROKU_CONTENT_TAGS
+#EXTINF:-1,Kanal 7 Avrupa (720p) [Not 24/7]
+https://livetv.radyotvonline.net/kanal7live/kanal7avr/playlist.m3u8
+#EXTINF:-1,Andromeda Italy (720p)
+https://stitcher-ipv4.pluto.tv/v1/stitch/embed/hls/channel/60802d37ee238e0007c94e64/master.m3u8?advertisingId={PSID}&appVersion=unknown&deviceDNT={TARGETOPT}&deviceId={PSID}&deviceLat=0&deviceLon=0&deviceMake=samsung&deviceModel=samsung&deviceType=samsung-tvplus&deviceVersion=unknown&embedPartner=samsung-tvplus&profileFloor=&profileLimit=&samsung_app_domain={APP_DOMAIN}&samsung_app_name={APP_NAME}&us_privacy=1YNY
+#EXTINF:-1,JOJ WAU (720p)
+https://live.cdn.joj.sk/live/andromeda/wau-720.m3u8
+#EXTINF:-1,Austral TV (1080p)
+https://stmv3.voxtvhd.com.br/australtv/australtv/playlist.m3u8
+#EXTINF:-1,Telemantova (1080p)
+https://5ce9406b73c33.streamlock.net/TeleMantova/livestream/playlist.m3u8
+#EXTINF:-1,RTM Parlimen (Dewan Negara) [Geo-blocked]
+https://d25tgymtnqzu8s.cloudfront.net/smil:negara/playlist.m3u8?id=8
+#EXTINF:-1,Pluto TV Competencias (720p)
+https://service-stitcher.clusters.pluto.tv/stitch/hls/channel/5dd6d935d000120009bc1132/master.m3u8?advertisingId=&appName=web&appVersion=5.14.0-0f5ca04c21649b8c8aad4e56266a23b96d73b83a&app_name=web&clientDeviceType=0&clientID=6fbead95-26b1-415d-998f-1bdef62d10be&clientModelNumber=na&deviceDNT=false&deviceId=6fbead95-26b1-415d-998f-1bdef62d10be&deviceLat=19.4358&deviceLon=-99.1441&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=88.0.4324.150&marketingRegion=VE&serverSideAds=false&sessionID=b8e5a857-714a-11eb-b532-0242ac110002&sid=b8e5a857-714a-11eb-b532-0242ac110002&userId=
+#EXTINF:-1,Canal Saúde (720p) [Not 24/7]
+https://arkyvbre1g.zoeweb.tv/fiocruz/fiocruz.stream/playlist.m3u8
+#EXTINF:-1,NCTV (1080p)
+https://pantera1-100gb-cl-movistar.dps.live/nctv/nctv.smil/playlist.m3u8
+#EXTINF:-1,Salsa Gorda Television (480p) [Not 24/7]
+https://www.televinterserver.com:19360/salsagordatv/salsagordatv.m3u8
+#EXTINF:-1,WKCF-DT2
+https://dvrfl03.bozztv.com/hondu-lxnews/index.m3u8
+#EXTINF:-1,Pluto TV Film Italy (720p)
+https://stitcher-ipv4.pluto.tv/v1/stitch/embed/hls/channel/608aa20a2e7f270007c4878d/master.m3u8?advertisingId={PSID}&appVersion=unknown&deviceDNT={TARGETOPT}&deviceId={PSID}&deviceLat=0&deviceLon=0&deviceMake=samsung&deviceModel=samsung&deviceType=samsung-tvplus&deviceVersion=unknown&embedPartner=samsung-tvplus&profileFloor=&profileLimit=&samsung_app_domain={APP_DOMAIN}&samsung_app_name={APP_NAME}&us_privacy=1YNY
+#EXTINF:-1,DD Uttar Pradesh (720p)
+https://cdn-1.pishow.tv/live/36/master.m3u8
+#EXTINF:-1,TV Canal Sur (1080p)
+https://streamtvs.tvcanalsur.com.do/hls/stream/index.m3u8
+#EXTINF:-1,FilmRise Binge Watch France (720p)
+https://d39g1vxj2ef6in.cloudfront.net/v1/master/3fec3e5cac39a52b2132f9c66c83dae043dc17d4/prod-rakuten-stitched/master.m3u8?ads.xumo_channelId=88883021
+#EXTINF:-1,SONGTV Armenia (720p)
+https://songtv.hls.iptvdc.com/web-armenia/index.m3u8
+#EXTINF:-1,Cine 1 (720p)
+https://live.artidijitalmedya.com/artidijital_cine1/cine1/playlist.m3u8
+#EXTINF:-1,Syros TV1 (720p)
+https://eco.streams.ovh:1936/syrostv1/syrostv1/playlist.m3u8
+#EXTINF:-1,MBC Masr USA (1080p)
+https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-masr-usa/cd8d40acdab28aac0582faa3bd3983f1/index.m3u8
+#EXTINF:-1,Canada Star TV (720p)
+https://main.clickstreamcdn.com/agm/star-canada/playlist.m3u8
+#EXTINF:-1,TV Cuatro 4.3 (1080p)
+https://5f1af61612fb5.streamlock.net/tv43/tv43.smil/.m3u8
+#EXTINF:-1,PAT La Paz
+https://www.redpat.tv/proxylpz/index.m3u8
+#EXTINF:-1,RTH-TV1 (1080p)
+https://2-fss-2.streamhoster.com/pl_120/amlst:206708-4203440/playlist.m3u8
+#EXTINF:-1,WKOH-DT4
+https://dvrfl03.bozztv.com/hondu/hondu-pbs-kids/index.m3u8
+#EXTINF:-1,SBTN
+https://live20.bozztv.com/dvrfl05/gin-netviet/index.m3u8
+#EXTINF:-1,Lingkar TV
+https://lingkartv.my.id/hls/lingkartv.m3u8
+#EXTINF:-1,WFMZ PPL Tower Camera
+https://cdn.jaybirdtv.com/wfmz/channel/9/master.m3u8
+#EXTINF:-1,Peniel Kids & Young (480p)
+https://s.emisoras.tv:8081/penielkids/index.m3u8
+#EXTINF:-1,Radio JND (1080p)
+https://radiojnd.cdn.hostin.cc/radiojnd/playlist.m3u8
+#EXTINF:-1,TV Sistemas Cuzco (360p) [Not 24/7]
+https://stmv1.voxhdnet.com/sistemascusco/sistemascusco/playlist.m3u8
+#EXTINF:-1,BUTV10 (Boston University) (1080p) [Not 24/7]
+https://cdnapisec.kaltura.com/p/2184561/sp/218456100/playManifest/entryId/1_68qxw4eu/format/applehttp/a.m3u8
+#EXTINF:-1,Starnet (480p)
+https://5a1178b42cc03.streamlock.net/8220/8220/playlist.m3u8
+#EXTINF:-1,Express Entertainment (1080p)
+https://5dcabf026b188.streamlock.net/expressdigital/livestream/playlist.m3u8
+#EXTINF:-1,Vallevision Canal 10 (720p) [Not 24/7]
+https://streaming.telecablecentral.com.do/Vallevision/ValleHD/playlist.m3u8
+#EXTINF:-1,TV Shenja [Geo-blocked]
+https://vipottbpkstream.vip.hr/Content/onevip-hls/Live/Channel(TV_Shenja)/index.m3u8
+#EXTINF:-1,TG Norba 24 (404p)
+https://router.xdevel.com/video0s976570-1326/stream/playlist_dvr.m3u8
+#EXTINF:-1,Midpen Media Center Diversity and Culture Channel 75 (720p)
+https://5c2974786200d.streamlock.net/live-chan75/ngrp:ch75_all/playlist.m3u8
+#EXTINF:-1,Garabito TV (720p)
+https://59ef525c24caa.streamlock.net/garabitoTV/garabitotv/playlist.m3u8
+#EXTINF:-1,Trace Hits (1080p)
+https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/trace-uk/encrypted.m3u8
+#EXTINF:-1,Starke Frauen (1080p)
+https://mainstreamstarkefrauen-rakuten.amagi.tv/playlist.m3u8
+#EXTINF:-1,La Voz de Maria (720p)
+https://live.lavozdemaria.com:3436/live/lavozdemarialive.m3u8
+#EXTINF:-1,MotoAmerica TV (1080p)
+https://1422977263.rsc.cdn77.org/HLS/MOTOAMERICA.m3u8
+#EXTINF:-1,ALTV (1080p)
+https://thaipbs-ujxrch.cdn.byteark.com/live/playlist_1080p/index.m3u8
+#EXTINF:-1,MTV Live (720p)
+https://fl5.moveonjoy.com/MTV_LIVE/index.m3u8
+#EXTINF:-1,Alhurra (720p)
+https://mbn-ingest-worldsafe.akamaized.net/hls/live/2038900/MBN_Alhurra_Worldsafe_HLS/master.m3u8
+#EXTINF:-1,TV Land
+https://fl3.moveonjoy.com/TV_LAND/index.m3u8
+#EXTINF:-1,Lao SV TV (480p)
+https://livefta.malimarcdn.com/ftaedge00/laosvtv.stream/playlist.m3u8
+#EXTINF:-1,Monara TV (720p) [Not 24/7]
+https://jk3lz8xklw79-hls-live.5centscdn.com/lpl/d0dbe915091d400bd8ee7f27f0791303.sdp/playlist.m3u8
+#EXTINF:-1,Hillsborough County TV HTV (Hillsborough County FL) (360p)
+https://cdn3.wowza.com/5/M0lyamVmM2JWcjhQ/hillsboroughcounty/G2155_002/playlist.m3u8

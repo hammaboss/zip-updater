@@ -1,0 +1,61 @@
+#EXTM3U
+#EXTINF:-1,Totally Turtles (OV)
+http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5ea816a44457070007ffabc7/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=1b215b53-4b81-11ef-a8ac-e146e4e7be02&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=8980aa41-76aa-4ed3-a9a5-b5277d21bd7f
+#EXTINF:-1,CGTN Русский (1080p)
+https://russian-livews.cgtn.com/hls/LSvexABhNipibK5KRuUkvHZ7220802LSTeze9o8tdFXMHsb1VosgoT220802cd/playlist.m3u8
+#EXTINF:-1,ORTS (480p) [Not 24/7]
+https://ms7.mx-cd.net/tv/200-1006554/ORTS_TV.smil/playlist.m3u8
+#EXTINF:-1,Emma einfach magisch!
+http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/5f4796368174910007756454/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=1b1d8ac4-4b81-11ef-a8ac-e146e4e7be02&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=a05d126a-1903-4adf-85c8-55259cc392f6
+#EXTINF:-1,Syfy East
+https://fl3.moveonjoy.com/SYFY/index.m3u8
+#EXTINF:-1,Prima TV Napoli (720p)
+https://stream1.aswifi.it/primatvnapoli/live/index.m3u8
+#EXTINF:-1,Galavision
+http://tv.nstvlatino.com:8080/live/Mitv2462/I8G5FfZBMw/3793.m3u8
+#EXTINF:-1,92 News HD (720p)
+http://92news.vdn.dstreamone.net/92newshd/92hd/playlist.m3u8
+#EXTINF:-1,Ahupa Visual Radio
+https://tv.btnrwanda.com:3349/live/ahupalive.m3u8
+#EXTINF:-1,M+ (1080p)
+https://d35j504z0x2vu2.cloudfront.net/v1/master/0bc8e8376bd8417a1b6761138aa41c26c7309312/m-plus/master.m3u8
+#EXTINF:-1,Der Sentinel – Im Auge des Jägers
+http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/6565fad6c917a50008484895/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=bc83cc71-4b91-11ef-8a44-83c5e90e038f&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=a8e34a6b-2009-4ff4-bb99-c5f21d519548
+#EXTINF:-1,MovieSphere by Lionsgate
+http://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv/stitch/hls/channel/64a3d96f060e830008af6745/master.m3u8?appName=web&appVersion=unknown&clientTime=0&deviceDNT=0&deviceId=2c7b17f6-35fc-11ef-a031-2b5d494037a2&deviceMake=Chrome&deviceModel=web&deviceType=web&deviceVersion=unknown&includeExtendedEvents=false&serverSideAds=false&sid=41f0c8e5-55e6-4740-a854-15ac608b8c65
+#EXTINF:-1,HiDance (1080i)
+https://s-pl-01.mediatool.tv/playout/hdpl-abr/index.m3u8
+#EXTINF:-1,CBS News Baltimore (720p)
+https://cbsnews.akamaized.net/hls/live/2099390/cbsnbal_11/master.m3u8
+#EXTINF:-1,Roya Kids Originals (1080p)
+https://playlist.fasttvcdn.com/pl/ptllxjd03j6g9oxxjdfapg/roya-kids-originals/playlist.m3u8
+#EXTINF:-1,BET East
+https://fl3.moveonjoy.com/BET_EAST/index.m3u8
+#EXTINF:-1,WDR 1 Live (720p)
+https://wdrfs247.akamaized.net/hls/live/681509/wdr_msl4_fs247/index.m3u8
+#EXTINF:-1,111 TV (720p)
+https://5db313b643fd8.streamlock.net/111TV/111TV/playlist.m3u8
+#EXTINF:-1,We One Kerala (720p) [Geo-blocked]
+http://kl.logicwebs.in:1935/sreemedia/sreemedia/playlist.m3u8
+#EXTINF:-1,Afghanistan International (720p)
+https://hls.afintl.com/hls/stream.m3u8
+#EXTINF:-1,Nei Monggol TV Children Channel
+http://play1-qk.nmtv.cn/live/1686560464515368.m3u8
+#EXTINF:-1,Kerman
+https://lenz.splus.ir/PLTV/88888888/224/3221226856/index.m3u8
+#EXTINF:-1,Crime 360 (720p)
+https://94a3e237.wurl.com/master/f36d25e7e52f1ba8d7e56eb859c636563214f541/UmFrdXRlblRWLWV1X0NyaW1lMzYwX0hMUw/playlist.m3u8
+#EXTINF:-1,DD Bangla
+https://d3eyhgoylams0m.cloudfront.net/v1/manifest/93ce20f0f52760bf38be911ff4c91ed02aa2fd92/ed7bd2c7-8d10-4051-b397-2f6b90f99acb/2e9e32a4-c4f7-49c3-96d6-c4e3660c7e3f/2.m3u8
+#EXTINF:-1,Cà Mau TV (720p) [Geo-blocked]
+https://tv.ctvcamau.vn/live/tv/tv.m3u8
+#EXTINF:-1,Nick Jr East
+https://fl3.moveonjoy.com/NICK_JR/index.m3u8
+#EXTINF:-1,Tamazight TV (480p)
+https://cdn.live.easybroadcast.io/ts_corp/73_tamazight_tccybxt/playlist_dvr.m3u8
+#EXTINF:-1,VTV Canal 32 (1080p)
+https://cnn.livestreaminggroup.info:3507/live/vtv32live.m3u8
+#EXTINF:-1,GVTV (720p)
+https://aegis-cloudfront-1.tubi.video/358eebe5-75f6-42dc-96b3-c6ddf5a46698/playlist.m3u8
+#EXTINF:-1,Луганск 24
+https://streaming.televizor-24-tochka.ru/live/29.m3u8
