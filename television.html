@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IPTV Player</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<style>
+:root{--accent:#00b4ff;--muted:#aee7ff;--bg1:#0d0d0d;--bg2:#1a1a1a}
+html,body{height:100%;margin:0;padding:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff}
+body{direction:rtl}
+.container{max-width:1000px;margin:18px auto;padding:12px}
+.tv-container{width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;box-shadow:0 0 50px rgba(0,180,255,0.25);display:flex;align-items:center;justify-content:center;position:relative}
+.tv-container.fullscreen{width:100vw;height:100vh;aspect-ratio:16/9;border-radius:0}
+video{width:100%;height:100%;object-fit:contain;background:#000;display:block;cursor:pointer}
+.status{text-align:center;margin:10px 0;color:var(--muted);min-height:20px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0}
+.controls button,.controls select,.controls input[type="text"],.controls input[type="file"]{background:rgba(0,0,0,0.6);color:#fff;border:0;padding:8px 12px;border-radius:8px;font-size:14px;cursor:pointer;transition:0.2s}
+.controls button:hover,.controls select:hover,.controls input[type="text"]:hover{transform:scale(1.03);background:#174f7a}
+.channel-box{background:rgba(0,0,0,0.6);border-radius:10px;padding:12px;box-shadow:0 0 30px rgba(0,180,255,0.12);margin-top:12px}
+#searchInput{width:100%;padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.03);color:#fff;margin-bottom:10px}
+.channel-list{max-height:340px;overflow:auto}
+.channel{display:flex;align-items:center;gap:10px;padding:8px;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;transition:0.2s}
+.channel:hover{background:rgba(33,150,243,0.12)}
+.channel-number{width:44px;text-align:center;font-weight:700}
+.channel-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.channel-move{width:64px;padding:6px;border-radius:6px;border:0;text-align:center;background:rgba(255,255,255,0.03);color:#fff}
+.selected{background:rgba(244,67,54,0.14)!important}
+.badge{display:inline-block;padding:2px 8px;border-radius:12px;background:var(--accent);color:#06121a;font-weight:700;margin-inline-start:8px}
+@media(max-width:600px){.controls{gap:6px}.channel-number{width:34px;font-size:13px}}
+#fullscreenControls{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);gap:8px;z-index:9999;background:rgba(0,0,0,0.6);padding:10px 16px;border-radius:12px;display:flex;align-items:center;flex-wrap:wrap;transition:opacity 0.3s ease;opacity:1}
+#fullscreenControls.hide{opacity:0;pointer-events:none}
+#fullscreenControls button,#fullscreenControls select,#fullscreenControls input{padding:4px;border-radius:6px;border:0;color:#fff;background:rgba(0,0,0,0.4);cursor:pointer}
+#fullscreenControls select,#fullscreenControls input[type=number],#fullscreenControls input[type=text]{width:auto}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="tv-container" id="tv">
+<video id="videoPlayer" autoplay playsinline></video>
+<div id="fullscreenControls">
+<button id="fsPrevBtn"><i class="fas fa-backward"></i></button>
+<button id="fsNextBtn"><i class="fas fa-forward"></i></button>
+<select id="fsQualitySelect"><option value="auto">Auto</option></select>
+<button id="exitFsBtn"><i class="fas fa-compress"></i></button>
+<input type="number" id="fsLoadNum" placeholder="عدد القنوات" min="1">
+<input type="text" id="fsSearchInput" placeholder="ابحث عن قناة...">
+</div>
+</div>
+<div class="status" id="status">جاهز</div>
+<div class="controls">
+<button id="playBtn"><i class="fas fa-play"></i></button>
+<button id="muteBtn"><i class="fas fa-volume-up"></i></button>
+<button id="prevBtn"><i class="fas fa-backward"></i></button>
+<button id="nextBtn"><i class="fas fa-forward"></i></button>
+<button id="fullscreenBtn"><i class="fas fa-expand"></i></button>
+<select id="qualitySelect"><option value="auto">Auto</option></select>
+<button id="exportM3U">حفظ M3U</button>
+</div>
+<div class="controls">
+<input type="file" id="fileInput" accept=".m3u">
+<input type="text" id="linkInput" placeholder="ألصق رابط M3U أو M3U8 هنا..." value="https://raw.githubusercontent.com/hammaboss/zip-updater/refs/heads/master/index.m3u">
+<button id="loadLink">تحميل الرابط وإضافة</button>
+<button id="clearChannels">مسح القنوات المحفوظة</button>
+<button id="loadTenBtn" style="background:#4caf50;">تحميل 10 قنوات</button>
+</div>
+<div class="controls">
+<button id="checkLinksBtn" style="background:#ff5722;">فحص القنوات</button>
+<button id="selectModeBtn" style="background:#03a9f4;">تحديد القنوات</button>
+<button id="deleteSelectedBtn" style="background:#f44336;">حذف القنوات المحددة</button>
+</div>
+<div class="channel-box">
+<input type="text" id="searchInput" placeholder="ابحث عن قناة...">
+<div class="channel-list" id="channelList"></div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+const video=document.getElementById("videoPlayer");
+const tv=document.getElementById("tv");
+const fileInput=document.getElementById("fileInput");
+const linkInput=document.getElementById("linkInput");
+const loadLinkBtn=document.getElementById("loadLink");
+const channelList=document.getElementById("channelList");
+const searchInput=document.getElementById("searchInput");
+const qualitySelect=document.getElementById("qualitySelect");
+const clearBtn=document.getElementById("clearChannels");
+const exportBtn=document.getElementById("exportM3U");
+const playBtn=document.getElementById("playBtn");
+const muteBtn=document.getElementById("muteBtn");
+const checkLinksBtn=document.getElementById("checkLinksBtn");
+const deleteSelectedBtn=document.getElementById("deleteSelectedBtn");
+const selectModeBtn=document.getElementById("selectModeBtn");
+const loadTenBtn=document.getElementById("loadTenBtn");
+const prevBtn=document.getElementById("prevBtn");
+const nextBtn=document.getElementById("nextBtn");
+const fullscreenBtn=document.getElementById("fullscreenBtn");
+const statusEl=document.getElementById("status");
+const fullscreenControls=document.getElementById("fullscreenControls");
+const fsPrevBtn=document.getElementById("fsPrevBtn");
+const fsNextBtn=document.getElementById("fsNextBtn");
+const fsQualitySelect=document.getElementById("fsQualitySelect");
+const exitFsBtn=document.getElementById("exitFsBtn");
+const fsLoadNum=document.getElementById("fsLoadNum");
+const fsSearchInput=document.getElementById("fsSearchInput");
+let hls;
+let allChannels=[];
+let currentIndex=0;
+let selectedChannels=new Set();
+let selectMode=false;
+let masterCache=[];
+let masterIndex=0;
+let fsControlsTimeout;
+function parseM3UToArray(c){const l=c.split(/\r?\n/);const o=[];const s=new Set();let n="قناة غير معروفة";for(const r of l){const t=r.trim();if(!t)continue;if(t.startsWith("#EXTINF")){const m=t.match(/,(.*)$/);n=m?m[1].trim():"قناة غير معروفة"}else if(!t.startsWith("#")){const u=t;if(!s.has(u)){s.add(u);o.push({name:n,url:u})}n="قناة غير معروفة"}}return o}
+function mergeChannels(s,i){const m=new Map();for(const e of s)m.set(e.url,e);for(const n of i)if(!m.has(n.url))m.set(n.url,n);return Array.from(m.values())}
+function shuffle(a){const t=a.slice();for(let i=t.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[t[i],t[j]]=[t[j],t[i]]}return t}
+async function isUrlReachable(u){try{await fetch(u,{method:"HEAD",mode:"no-cors",cache:"no-cache",redirect:"follow"});return true}catch{return false}}
+function renderChannels(channels){channelList.innerHTML="";channels.forEach((ch,i)=>{const div=document.createElement("div");div.className="channel";if(selectedChannels.has(ch.url))div.classList.add("selected");const num=document.createElement("div");num.className="channel-number";num.textContent=i+1;const name=document.createElement("div");name.className="channel-name";name.textContent=ch.name;const moveInput=document.createElement("input");moveInput.type="number";moveInput.className="channel-move";moveInput.min=1;moveInput.max=channels.length;moveInput.value=i+1;moveInput.addEventListener("change",()=>{const newIndex=parseInt(moveInput.value)-1;if(newIndex>=0&&newIndex<allChannels.length){allChannels.splice(i,1);allChannels.splice(newIndex,0,ch);localStorage.setItem("m3uChannels",JSON.stringify(allChannels));renderChannels(allChannels)}});div.appendChild(num);div.appendChild(name);div.appendChild(moveInput);div.addEventListener("click",()=>{if(selectMode){if(selectedChannels.has(ch.url)){selectedChannels.delete(ch.url);div.classList.remove("selected")}else{selectedChannels.add(ch.url);div.classList.add("selected")}}else{playChannelByUrl(ch.url)}});channelList.appendChild(div)})}
+function playChannelByUrl(url) {
+    const index = allChannels.findIndex(ch => ch.url === url);
+    if (index !== -1) {
+        playChannel(index);
+    }
+}
+function playChannel(i) {
+    if (i < 0 || i >= allChannels.length) return;
+    currentIndex = i;
+    const ch = allChannels[i];
+    statusEl.textContent = "جاري تشغيل: " + (ch.name || ch.url);
+    if (hls) {
+        try {
+            hls.destroy();
+        } catch (e) {}
+        hls = null;
+    }
+    if (Hls.isSupported()) {
+        hls = new Hls();
+        hls.loadSource(ch.url);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+            qualitySelect.innerHTML = "";
+            fsQualitySelect.innerHTML = "";
+            const autoOption = document.createElement("option");
+            autoOption.value = "auto";
+            autoOption.text = "Auto";
+            qualitySelect.appendChild(autoOption);
+            fsQualitySelect.appendChild(autoOption.cloneNode(true));
+            hls.levels.forEach((level, i) => {
+                const o = document.createElement("option");
+                o.value = i;
+                o.text = level.height ? level.height + "p" : "Unknown";
+                qualitySelect.appendChild(o);
+                fsQualitySelect.appendChild(o.cloneNode(true));
+            })
+        });
+        fetch(ch.url)
+            .then(response => response.text())
+            .then(text => {
+                ch.m3u8Content = text;
+            })
+            .catch(error => {
+                console.error("Failed to fetch M3U8 content:", error);
+            });
+        hls.on(Hls.Events.ERROR, function() {});
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = ch.url;
+    } else video.src = ch.url;
+    video.play().catch(() => {});
+    updatePlayButtonIcon();
+    localStorage.setItem("m3uChannels", JSON.stringify(allChannels));
+}
+function updatePlayButtonIcon(){playBtn.innerHTML=video.paused?'<i class="fas fa-play"></i>':'<i class="fas fa-pause"></i>'}
+qualitySelect.addEventListener("change",function(){if(!hls)return;hls.currentLevel=this.value==="auto"?-1:parseInt(this.value)})
+fsQualitySelect.addEventListener("change",function(){qualitySelect.value=this.value;qualitySelect.dispatchEvent(new Event('change'))})
+searchInput.addEventListener("input",()=>{const q=searchInput.value.trim().toLowerCase();if(!q)renderChannels(allChannels);else renderChannels(allChannels.filter(ch=>(ch.name||"").toLowerCase().includes(q)||(ch.url||"").toLowerCase().includes(q)||(ch.m3u8Content || "").toLowerCase().includes(q)))})
+fsSearchInput.addEventListener("input",()=>{const q=fsSearchInput.value.trim().toLowerCase();if(!q)renderChannels(allChannels);else renderChannels(allChannels.filter(ch=>(ch.name||"").toLowerCase().includes(q)||(ch.url||"").toLowerCase().includes(q)||(ch.m3u8Content || "").toLowerCase().includes(q)))})
+fileInput.addEventListener("change",e=>{const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=e2=>{const incoming=parseM3UToArray(e2.target.result);let stored=[];try{stored=JSON.parse(localStorage.getItem("m3uChannels")||"[]")}catch{stored=[]}const combined=mergeChannels(stored,incoming);allChannels=combined;localStorage.setItem("m3uChannels",JSON.stringify(allChannels));renderChannels(allChannels);if(allChannels.length>0)playChannel(0);statusEl.textContent="تمت إضافة قنوات من الملف. المحفوظ الآن: "+allChannels.length};reader.readAsText(file);fileInput.value=""})
+loadLinkBtn.addEventListener("click",async()=>{const url=linkInput.value.trim();if(!url)return;try{statusEl.textContent="جاري تحميل الرابط...";const res=await fetch(url);if(!res.ok)throw new Error();const text=await res.text();const incoming=parseM3UToArray(text);let stored=[];try{stored=JSON.parse(localStorage.getItem("m3uChannels")||"[]")}catch{stored=[]}const combined=mergeChannels(stored,incoming);allChannels=combined;localStorage.setItem("m3uChannels",JSON.stringify(allChannels));renderChannels(allChannels);if(allChannels.length>0)playChannel(0);statusEl.textContent="تمت إضافة قنوات من الرابط. المحفوظ الآن: "+allChannels.length}catch{alert("فشل تحميل الرابط");statusEl.textContent="فشل تحميل الرابط"}linkInput.value=""})
+function clearChannels(){allChannels=[];selectedChannels.clear();renderChannels(allChannels);localStorage.removeItem("m3uChannels");statusEl.textContent="تم مسح القنوات المحفوظة."}
+clearBtn.addEventListener("click",clearChannels)
+exportBtn.addEventListener("click",()=>{let m3u="#EXTM3U\n";allChannels.forEach(ch=>{m3u+=`#EXTINF:-1,${ch.name}\n${ch.url}\n`});const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([m3u],{type:"audio/x-mpegurl"}));a.download="channels.m3u";a.click()})
+playBtn.addEventListener("click",()=>{if(video.paused)video.play();else video.pause();updatePlayButtonIcon()})
+video.addEventListener("play",updatePlayButtonIcon)
+video.addEventListener("pause",updatePlayButtonIcon)
+muteBtn.addEventListener("click",()=>{video.muted=!video.muted;muteBtn.innerHTML=video.muted?'<i class="fas fa-volume-mute"></i>':'<i class="fas fa-volume-up"></i>'})
+checkLinksBtn.addEventListener("click",async()=>{statusEl.textContent="جاري فحص القنوات...";for(let i=0;i<allChannels.length;i++){const ch=allChannels[i];const div=channelList.children[i];const nameDiv=div?div.querySelector(".channel-name"):null;try{await fetch(ch.url,{method:'HEAD',mode:'no-cors'});if(nameDiv)nameDiv.style.color="white"}catch{if(nameDiv)nameDiv.style.color="red"}}statusEl.textContent="انتهى فحص القنوات."})
+deleteSelectedBtn.addEventListener("click",()=>{if(selectedChannels.size===0)return;allChannels=allChannels.filter(ch=>!selectedChannels.has(ch.url));selectedChannels.clear();renderChannels(allChannels);localStorage.setItem("m3uChannels",JSON.stringify(allChannels));statusEl.textContent="تم حذف القنوات المحددة. المحفوظ الآن: "+allChannels.length})
+selectModeBtn.addEventListener("click",()=>{selectMode=!selectMode;selectModeBtn.style.background=selectMode?"#4caf50":"#03a9f4";if(!selectMode)selectedChannels.clear();renderChannels(allChannels)})
+prevBtn.addEventListener("click",()=>{if(allChannels.length===0)return;const idx=(currentIndex-1+allChannels.length)%allChannels.length;playChannel(idx)})
+nextBtn.addEventListener("click",()=>{if(allChannels.length===0)return;const idx=(currentIndex+1)%allChannels.length;playChannel(idx)})
+fullscreenBtn.addEventListener("click",()=>{if(!document.fullscreenElement){tv.requestFullscreen();tv.classList.add("fullscreen");showFsControls()}else{document.exitFullscreen();tv.classList.remove("fullscreen");hideFsControls()}})
+exitFsBtn.addEventListener("click",()=>{document.exitFullscreen();tv.classList.remove("fullscreen");hideFsControls()})
+fsPrevBtn.addEventListener("click",()=>prevBtn.click())
+fsNextBtn.addEventListener("click",()=>nextBtn.click())
+function showFsControls(){fullscreenControls.classList.remove("hide");if(fsControlsTimeout)clearTimeout(fsControlsTimeout); fsControlsTimeout=setTimeout(()=>{fullscreenControls.classList.add("hide")},5000)}
+function hideFsControls(){fullscreenControls.classList.add("hide");if(fsControlsTimeout)clearTimeout(fsControlsTimeout)}
+video.addEventListener("click",()=>{if(tv.classList.contains("fullscreen")){showFsControls()}})
+async function loadTenFromIptvOrg(){try{statusEl.textContent="جاري تحميل القوائم من iptv-org...";const masterUrl="https://iptv-org.github.io/iptv/index.m3u";const res=await fetch(masterUrl);if(!res.ok)throw new Error();const text=await res.text();if(masterCache.length===0)masterCache=parseM3UToArray(text).filter(ch=>/\.m3u8?(\?|$)/i.test(ch.url));const shuffled=shuffle(masterCache);let stored=[];try{stored=JSON.parse(localStorage.getItem("m3uChannels")||"[]")}catch{stored=[]}const storedUrls=new Set(stored.map(ch=>ch.url));const newOnes=[];for(const ch of shuffled){if(newOnes.length>=10)break;if(storedUrls.has(ch.url))continue;const ok=await isUrlReachable(ch.url);if(ok){newOnes.push(ch);storedUrls.add(ch.url)}}allChannels=mergeChannels(stored,newOnes);localStorage.setItem("m3uChannels",JSON.stringify(allChannels));renderChannels(allChannels);statusEl.textContent="المحفوظ الآن: "+allChannels.length+" (تمت الإضافة: "+newOnes.length+")";if(allChannels.length>0)playChannel(0)}catch{statusEl.textContent="تعذر تحميل القنوات الجديدة"}}
+loadTenBtn.addEventListener("click",()=>{loadTenFromIptvOrg()})
+window.addEventListener("load",()=>{try{const stored=JSON.parse(localStorage.getItem("m3uChannels")||"[]");allChannels=Array.isArray(stored)?stored:[]}catch{allChannels=[]}renderChannels(allChannels);if(allChannels.length>0){playChannel(0);statusEl.textContent="المحفوظ الآن: "+allChannels.length}else{statusEl.textContent="جاهز"}})
+fsLoadNum.addEventListener("change",async()=>{const num=parseInt(fsLoadNum.value);if(!num||num<1)return;try{statusEl.textContent="جاري تحميل "+num+" قناة عشوائية...";const masterUrl="https://iptv-org.github.io/iptv/index.m3u";const res=await fetch(masterUrl);if(!res.ok)throw new Error();const text=await res.text();if(masterCache.length===0)masterCache=parseM3UToArray(text).filter(ch=>/\.m3u8?(\?|$)/i.test(ch.url));const shuffled=shuffle(masterCache);let stored=[];try{stored=JSON.parse(localStorage.getItem("m3uChannels")||"[]")}catch{stored=[]}const storedUrls=new Set(stored.map(ch=>ch.url));const newOnes=[];for(const ch of shuffled){if(newOnes.length>=num)break;if(storedUrls.has(ch.url))continue;const ok=await isUrlReachable(ch.url);if(ok){newOnes.push(ch);storedUrls.add(ch.url)}}allChannels=mergeChannels(stored,newOnes);localStorage.setItem("m3uChannels",JSON.stringify(allChannels));renderChannels(allChannels);statusEl.textContent="المحفوظ الآن: "+allChannels.length+" (تمت الإضافة: "+newOnes.length+")";if(allChannels.length>0)playChannel(0)}catch{statusEl.textContent="تعذر تحميل القنوات الجديدة"}})
+</script>
+</body>
+</html>
