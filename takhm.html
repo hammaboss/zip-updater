@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IPTV Player Pro</title>
+  <style>
+/* =========================================================
+   🎨 الثيم والألوان والمتغيّرات العامة
+   ========================================================= */
+:root{
+  --accent:#00b4ff;
+  --accent-2:#19d3ff;
+  --muted:#aee7ff;
+  --bg1:#0b0f14;
+  --bg2:#111826;
+  --panel:#0f141d;
+  --panel-2:#141c29;
+  --danger:#d32f2f;
+  --success:#2e7d32;
+  --warning:#f39c12;
+  --text:#f5f8ff;
+  --soft:#c9eaff;
+}
+
+/* ضبط عام */
+*{box-sizing:border-box}
+html,body{height:100%}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:"Segoe UI","Tajawal",Arial,sans-serif;
+  background:radial-gradient(1100px 600px at 70% 0%,#0f2030 0%,var(--bg1) 45%,var(--bg2) 100%);
+  color:var(--text);
+  direction:rtl;
+  font-size:20px;
+  line-height:1.35;
+}
+
+/* الحاوية الرئيسية */
+.container{
+  max-width:1380px;
+  margin:20px auto 80px;
+  padding:18px;
+}
+
+/* الهيدر */
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:14px;
+}
+.brand{
+  display:flex;align-items:center;gap:12px;
+  padding:8px 12px;border-radius:14px;background:linear-gradient(90deg,rgba(0,180,255,.18),rgba(0,180,255,.05));
+  box-shadow:0 0 0 1px rgba(255,255,255,.05) inset;
+}
+.brand i{font-size:26px;color:var(--accent)}
+.brand .t1{font-weight:800;letter-spacing:.6px}
+.brand .t2{opacity:.85;font-size:.9em}
+.top-actions{display:flex;gap:10px;flex-wrap:wrap}
+.top-actions button,.top-actions select{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid rgba(255,255,255,.06);
+  color:var(--text);
+  padding:10px 14px;border-radius:12px;font-size:16px;cursor:pointer;transition:.2s;
+}
+.top-actions button:hover,.top-actions select:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(0,180,255,.18)}
+
+/* إطار التلفاز */
+.tv-wrap{
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:18px;
+  padding:14px;
+}
+.tv-container{
+  width:100%;
+  aspect-ratio:16/9;
+  background:#000;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 0 60px rgba(0,180,255,.22);
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.tv-container.fullscreen{width:100vw;height:100vh;border-radius:0;aspect-ratio:16/9}
+
+/* 🎮 عنصر الفيديو
+   ✅ تمت إضافة controls لعرض أدوات المتصفح الأصلية */
+video{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  background:#000;
+  display:block;
+  cursor:pointer
+}
+
+/* 🏷️ تراكب اسم القناة
+   ✅ نبدأ مخفي (display:none) وسيظهر 5 ثواني عند التشغيل أو النقر */
+#overlayTitle{
+  position:absolute;top:14px;right:14px;
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(3px);
+  padding:10px 14px;border-radius:12px;font-size:18px;
+  max-width:60vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;
+  display:none;                 /* ✅ يبدأ مخفي */
+  transition:opacity .2s ease;  /* انتقال لطيف */
+  opacity:1;
+}
+
+.status{
+  text-align:center;margin:14px 0;color:var(--muted);min-height:28px;font-size:22px
+}
+
+/* أزرار التحكم المخصصة داخل الصفحة */
+.controls{
+  display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:12px 0
+}
+.controls button,.controls select,.controls input[type="text"],.controls input[type="file"],.controls input[type="number"],.controls input[type="range"]{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  color:#fff;border:1px solid rgba(255,255,255,.06);
+  padding:14px 16px;border-radius:12px;font-size:18px;cursor:pointer;transition:.2s
+}
+.controls button:hover,.controls select:hover,.controls input[type="text"]:hover{transform:scale(1.04);box-shadow:0 10px 30px rgba(0,180,255,.22)}
+.controls .pill{border-radius:999px;padding-inline:18px}
+.controls .wide{min-width:220px}
+.controls .green{background:linear-gradient(180deg,rgba(76,175,80,.2),rgba(76,175,80,.12))}
+.controls .orange{background:linear-gradient(180deg,rgba(255,87,34,.2),rgba(255,87,34,.12))}
+.controls .blue{background:linear-gradient(180deg,rgba(3,169,244,.2),rgba(3,169,244,.12))}
+.controls .red{background:linear-gradient(180deg,rgba(244,67,54,.2),rgba(244,67,54,.12))}
+.controls label{opacity:.9}
+
+/* شبكة التخطيط */
+.grid{
+  display:grid;
+  grid-template-columns:1.3fr .9fr;
+  gap:16px;
+}
+@media(max-width:1100px){.grid{grid-template-columns:1fr}}
+.panel{
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:16px;padding:14px
+}
+
+/* قائمة القنوات */
+.channel-box{border-radius:16px}
+#searchInput{
+  width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.06);
+  background:rgba(255,255,255,.05);color:#fff;margin-bottom:12px;font-size:18px
+}
+.channel-list{max-height:560px;overflow:auto;border-radius:12px}
+.channel{
+  display:grid;grid-template-columns:64px 1fr 92px;align-items:center;gap:12px;
+  padding:12px 12px;border-bottom:1px solid rgba(255,255,255,.06);cursor:pointer;transition:.2s;font-size:20px;background:transparent
+}
+.channel:hover{background:rgba(33,150,243,.12)}
+.channel.selected{background:rgba(244,67,54,.18)!important}
+.channel-number{width:56px;height:42px;display:flex;align-items:center;justify-content:center;font-weight:800;border-radius:10px;background:rgba(255,255,255,.05)}
+.channel-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.channel-actions{display:flex;gap:6px;align-items:center;justify-content:flex-end}
+.channel-move{width:84px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.06);text-align:center;background:rgba(255,255,255,.05);color:#fff;font-size:18px}
+.channel-expired{color:var(--danger);font-weight:800}
+.tag{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.06);font-size:.75em;margin-inline-start:8px}
+.tag i{opacity:.9}
+.channel-meta{font-size:.75em;opacity:.8}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#06121a;font-weight:800;margin-inline-start:8px}
+
+/* عناصر التحكم في وضع ملء الشاشة */
+#fullscreenControls{
+  position:absolute;bottom:22px;left:50%;transform:translateX(-50%);gap:10px;z-index:9999;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(6px);padding:12px 16px;border-radius:14px;display:flex;align-items:center;flex-wrap:wrap;transition:opacity .3s ease;opacity:1
+}
+#fullscreenControls.hide{opacity:0;pointer-events:none}
+#fullscreenControls button,#fullscreenControls select,#fullscreenControls input{
+  padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.1);color:#fff;background:rgba(0,0,0,.45);cursor:pointer;font-size:18px
+}
+
+/* تنبيهات */
+#alertBox{
+  position:fixed;top:16px;right:50%;transform:translateX(50%);
+  background:linear-gradient(180deg,rgba(211,47,47,.92),rgba(211,47,47,.88));
+  color:white;padding:16px 22px;border-radius:12px;font-size:18px;z-index:10000;display:none;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);min-width:260px;text-align:center
+}
+.toast-success{background:linear-gradient(180deg,rgba(46,125,50,.92),rgba(46,125,50,.88))!important}
+.toast-warning{background:linear-gradient(180deg,rgba(243,156,18,.92),rgba(243,156,18,.88))!important}
+
+/* كروت معلومات صغيرة */
+.kv{
+  display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin:8px 0 4px;
+}
+.kv .item{
+  display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.06)
+}
+
+.slider{width:220px;height:8px;accent-color:var(--accent)}
+.footer-note{opacity:.6;text-align:center;margin-top:14px;font-size:.9em}
+.theme-toggle{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.04))!important}
+
+/* سويتش */
+.switch{position:relative;display:inline-block;width:56px;height:30px}
+.switch input{opacity:0;width:0;height:0}
+.slider-sw{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#3a4a5c;transition:.2s;border-radius:44px;border:1px solid rgba(255,255,255,.1)}
+.slider-sw:before{position:absolute;content:"";height:24px;width:24px;left:3px;bottom:2.5px;background:white;transition:.2s;border-radius:50%}
+.switch input:checked + .slider-sw{background:#1d7fb3}
+.switch input:checked + .slider-sw:before{transform:translateX(25px)}
+
+/* ترقيم الصفحات */
+.pagination{display:flex;gap:8px;justify-content:center;margin-top:10px}
+.pagination button{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:transparent;color:var(--text);cursor:pointer}
+.pagination .active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#06121a;font-weight:800}
+
+/* تجاوبية */
+@media(max-width:800px){
+  .controls{flex-direction:column;align-items:stretch}
+  .brand .t1{font-size:16px}
+  .brand .t2{font-size:12px}
+}
+  </style>
+
+  <!-- أيقونات -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 🔔 صندوق التنبيهات -->
+    <div id="alertBox" role="alert" aria-live="assertive"></div>
+
+    <!-- 🧭 رأس الصفحة -->
+    <div class="header">
+      <div class="brand">
+        <i class="fa-solid fa-tv"></i>
+        <div>
+          <div class="t1">IPTV Player Pro</div>
+          <div class="t2">مشغل قنوات M3U احترافي</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="themeBtn" class="theme-toggle"><i class="fa-solid fa-moon"></i> تبديل النمط</button>
+        <select id="uiScale">
+          <option value="1.00">حجم 100%</option>
+          <option value="1.10">حجم 110%</option>
+          <option value="1.25" selected>حجم 125%</option>
+          <option value="1.40">حجم 140%</option>
+          <option value="1.60">حجم 160%</option>
+        </select>
+        <button id="resetState"><i class="fa-solid fa-rotate"></i> إعادة الضبط</button>
+      </div>
+    </div>
+
+    <!-- 📺 منطقة الفيديو -->
+    <div class="tv-wrap panel">
+      <div class="tv-container" id="tv">
+        <!-- ✅ controls مفعّلة لإظهار أدوات الفيديو الأصلية -->
+        <video id="videoPlayer" autoplay playsinline controls></video>
+
+        <!-- 🏷️ اسم القناة (سيظهر 5 ثواني ويختفي) -->
+        <div id="overlayTitle">جاهز</div>
+
+        <!-- 🧰 عناصر تحكم تظهر فقط في وضع ملء الشاشة -->
+        <div id="fullscreenControls">
+          <button id="fsPrevBtn" title="السابق"><i class="fas fa-backward"></i></button>
+          <button id="fsNextBtn" title="التالي"><i class="fas fa-forward"></i></button>
+          <select id="fsQualitySelect" title="الجودة"><option value="auto">Auto</option></select>
+          <button id="fsFillBtn" title="ملء/احتواء"><i class="fas fa-expand-arrows-alt"></i></button>
+          <button id="exitFsBtn" title="خروج ملء الشاشة"><i class="fas fa-compress"></i></button>
+          <input type="number" id="fsLoadNum" placeholder="عدد القنوات" min="1" title="تحميل عدد عشوائي">
+          <input type="text" id="fsSearchInput" placeholder="بحث iptv-org..." title="ابحث عن قناة" inputmode="search" autocomplete="off">
+          <button id="fsSearchBtn" title="بحث"><i class="fas fa-search"></i></button>
+        </div>
+      </div>
+
+      <!-- 📝 حالة التشغيل -->
+      <div class="status" id="status">جاهز</div>
+
+      <!-- 🎛️ أزرار تحكم مخصصة إضافية -->
+      <div class="controls">
+        <button id="playBtn" class="pill"><i class="fas fa-play"></i></button>
+        <button id="muteBtn" class="pill"><i class="fas fa-volume-up"></i></button>
+        <button id="prevBtn" class="pill"><i class="fas fa-backward"></i></button>
+        <button id="nextBtn" class="pill"><i class="fas fa-forward"></i></button>
+        <button id="fullscreenBtn" class="pill"><i class="fas fa-expand"></i></button>
+        <select id="qualitySelect" class="pill"><option value="auto">Auto</option></select>
+        <button id="exportM3U" class="pill">حفظ M3U</button>
+      </div>
+
+      <!-- 🔊 عناصر إضافية -->
+      <div class="kv">
+        <div class="item">
+          <i class="fa-solid fa-volume-high"></i>
+          <input id="volSlider" class="slider" type="range" min="0" max="1" step="0.01">
+          <span id="volVal">100%</span>
+        </div>
+        <div class="item">
+          <i class="fa-solid fa-gauge"></i>
+          <select id="playbackRate">
+            <option value="0.75">0.75x</option>
+            <option value="1" selected>1x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+          </select>
+        </div>
+        <div class="item">
+          <i class="fa-solid fa-closed-captioning"></i>
+          <label class="switch"><input id="fitToggle" type="checkbox"><span class="slider-sw"></span></label>
+          <span id="fitLabel">احتواء</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🧱 الشبكة: قائمة القنوات + لوحة المعلومات -->
+    <div class="grid">
+      <div class="panel">
+        <div class="controls">
+          <input type="file" id="fileInput" accept=".m3u">
+          <input type="text" id="linkInput" class="wide" placeholder="ألصق رابط M3U أو M3U8 هنا..." value="https://raw.githubusercontent.com/hammaboss/zip-updater/refs/heads/master/index.m3u">
+          <button id="loadLink" class="green">تحميل الرابط وإضافة</button>
+        </div>
+
+        <div class="controls">
+          <button id="loadTenBtn" class="green">تحميل 10 قنوات</button>
+          <button id="checkLinksBtn" class="orange">فحص القنوات</button>
+          <button id="selectModeBtn" class="blue">تحديد القنوات</button>
+          <button id="deleteSelectedBtn" class="red">حذف القنوات المحددة</button>
+          <button id="clearChannels" class="red">مسح القنوات المحفوظة</button>
+        </div>
+
+        <div class="channel-box panel">
+          <input type="text" id="searchInput" placeholder="ابحث داخل القنوات المحفوظة...">
+          <div class="channel-list" id="channelList"></div>
+          <div class="pagination" id="pagination"></div>
+          <div class="footer-note">نصيحة: انقر نقرًا مزدوجًا على القناة لفتح ملء الشاشة مباشرة</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-weight:700">لوحة المعلومات</div>
+          <span class="badge" id="totalBadge">0 قناة</span>
+        </div>
+        <div id="statsBox" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="panel" style="padding:12px">
+            <div style="opacity:.7">القنوات الصالحة</div>
+            <div id="statOk" style="font-size:32px;font-weight:800">0</div>
+          </div>
+          <div class="panel" style="padding:12px">
+            <div style="opacity:.7">القنوات المنتهية</div>
+            <div id="statBad" style="font-size:32px;font-weight:800;color:var(--danger)">0</div>
+          </div>
+          <div class="panel" style="padding:12px">
+            <div style="opacity:.7">آخر تحديث</div>
+            <div id="statUpdated" style="font-size:20px">—</div>
+          </div>
+          <div class="panel" style="padding:12px">
+            <div style="opacity:.7">الجودة الحالية</div>
+            <div id="statQuality" style="font-size:20px">Auto</div>
+          </div>
+        </div>
+        <div style="margin-top:12px" class="footer-note">تلميحات: المسافة تشغيل/إيقاف، الأسهم يمين/يسار للتنقّل، F لملء الشاشة، M كتم.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 📦 HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+  <script>
+/* =========================================================
+   🧠 تعريف العناصر والمتغيّرات
+   ========================================================= */
+const video = document.getElementById("videoPlayer");
+const tv = document.getElementById("tv");
+const overlayTitle = document.getElementById("overlayTitle"); // 🏷️ عنصر اسم القناة
+const fileInput = document.getElementById("fileInput");
+const linkInput = document.getElementById("linkInput");
+const loadLinkBtn = document.getElementById("loadLink");
+const channelList = document.getElementById("channelList");
+const searchInput = document.getElementById("searchInput");
+const qualitySelect = document.getElementById("qualitySelect");
+const clearBtn = document.getElementById("clearChannels");
+const exportBtn = document.getElementById("exportM3U");
+const playBtn = document.getElementById("playBtn");
+const muteBtn = document.getElementById("muteBtn");
+const checkLinksBtn = document.getElementById("checkLinksBtn");
+const deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
+const selectModeBtn = document.getElementById("selectModeBtn");
+const loadTenBtn = document.getElementById("loadTenBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+const statusEl = document.getElementById("status");
+const fullscreenControls = document.getElementById("fullscreenControls");
+const fsPrevBtn = document.getElementById("fsPrevBtn");
+const fsNextBtn = document.getElementById("fsNextBtn");
+const fsQualitySelect = document.getElementById("fsQualitySelect");
+const exitFsBtn = document.getElementById("exitFsBtn");
+const fsLoadNum = document.getElementById("fsLoadNum");
+const fsSearchInput = document.getElementById("fsSearchInput");
+const fsSearchBtn = document.getElementById("fsSearchBtn");
+const fsFillBtn = document.getElementById("fsFillBtn");
+const volSlider = document.getElementById("volSlider");
+const volVal = document.getElementById("volVal");
+const playbackRate = document.getElementById("playbackRate");
+const fitToggle = document.getElementById("fitToggle");
+const fitLabel = document.getElementById("fitLabel");
+const uiScale = document.getElementById("uiScale");
+const themeBtn = document.getElementById("themeBtn");
+const resetState = document.getElementById("resetState");
+const statOk = document.getElementById("statOk");
+const statBad = document.getElementById("statBad");
+const statUpdated = document.getElementById("statUpdated");
+const statQuality = document.getElementById("statQuality");
+const totalBadge = document.getElementById("totalBadge");
+const paginationEl = document.getElementById("pagination");
+const alertBox = document.getElementById("alertBox");
+
+let hls;
+let allChannels = [];
+let currentIndex = 0;
+let selectedChannels = new Set();
+let selectMode = false;
+let masterCache = [];
+let fsControlsTimeout;
+let theme = "dark";
+let pageSize = 50;
+let currentPage = 0;
+const MAX_CHANNELS = 500;
+const TEST_CONCURRENCY = 6;
+
+/* 🕒 مؤقت خاص بتراكب اسم القناة (5 ثواني) */
+let overlayTimeout = null;
+
+/* =========================================================
+   🔔 دالة تنبيه أعلى الشاشة
+   ========================================================= */
+function showAlert(msg, type) {
+  alertBox.textContent = msg;
+  alertBox.classList.remove("toast-success", "toast-warning");
+  if (type === "success") alertBox.classList.add("toast-success");
+  if (type === "warning") alertBox.classList.add("toast-warning");
+  alertBox.style.display = "block";
+  clearTimeout(showAlert._t);
+  showAlert._t = setTimeout(() => {
+    alertBox.style.display = "none";
+  }, 4200);
+}
+
+/* =========================================================
+   🧩 أدوات M3U: قراءة، دمج، إزالة تكرار، إلخ...
+   ========================================================= */
+function parseM3UToArray(c) {
+  const l = c.split(/\r?\n/);
+  const o = [];
+  const s = new Set();
+  let n = "قناة غير معروفة";
+  for (const r of l) {
+    const t = r.trim();
+    if (!t) continue;
+    if (t.startsWith("#EXTINF")) {
+      const m = t.match(/,(.*)$/);
+      n = m ? m[1].trim() : "قناة غير معروفة";
+    } else if (!t.startsWith("#")) {
+      const u = t;
+      if (!s.has(u)) {
+        s.add(u);
+        o.push({ name: n, url: u });
+      }
+      n = "قناة غير معروفة";
+    }
+  }
+  return o;
+}
+
+function mergeChannels(s, i) {
+  const m = new Map();
+  for (const e of s) m.set(e.url, e);
+  for (const n of i) if (!m.has(n.url)) m.set(n.url, n);
+  return Array.from(m.values());
+}
+
+function shuffle(a) {
+  const t = a.slice();
+  for (let i = t.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [t[i], t[j]] = [t[j], t[i]];
+  }
+  return t;
+}
+
+function deduplicateChannels(channels) {
+  const seen = new Map();
+  for (const ch of channels) {
+    const key = (ch.name || "") + "|" + (ch.url || "");
+    if (!seen.has(key)) seen.set(key, ch);
+  }
+  return Array.from(seen.values());
+}
+
+function pickRandomChannels(arr, limit = MAX_CHANNELS) {
+  const shuffled = shuffle(arr);
+  return shuffled.slice(0, limit);
+}
+
+function saveAll() {
+  try {
+    localStorage.setItem("m3uChannels", JSON.stringify(allChannels));
+  } catch (e) {
+    try {
+      localStorage.removeItem("m3uChannels");
+      localStorage.setItem("m3uChannels", JSON.stringify(allChannels.slice(0, 100)));
+    } catch {}
+  }
+}
+
+/* =========================================================
+   💾 تفضيلات المستخدم (الصوت، السرعة، الملء/الاحتواء، الثيم ..)
+   ========================================================= */
+function savePrefs() {
+  const prefs = {
+    volume: video.volume,
+    muted: video.muted,
+    rate: video.playbackRate,
+    fit: video.style.objectFit || "contain",
+    uiScale: uiScale.value || "1.25",
+    theme
+  };
+  localStorage.setItem("iptv_prefs", JSON.stringify(prefs));
+}
+
+function loadPrefs() {
+  try {
+    const p = JSON.parse(localStorage.getItem("iptv_prefs") || "{}");
+    if (typeof p.volume === "number") { video.volume = p.volume; volSlider.value = p.volume; volVal.textContent = Math.round(p.volume * 100) + "%"; }
+    if (typeof p.muted === "boolean") { video.muted = p.muted; updateMuteIcon(); }
+    if (typeof p.rate === "number") { video.playbackRate = p.rate; playbackRate.value = String(p.rate); }
+    if (p.fit) { video.style.objectFit = p.fit; fitToggle.checked = p.fit === "fill"; fitLabel.textContent = p.fit === "fill" ? "ملء" : "احتواء"; }
+    if (p.uiScale) { document.body.style.setProperty("transform", `scale(${p.uiScale})`); document.body.style.transformOrigin = "top center"; uiScale.value = p.uiScale; }
+    if (p.theme) applyTheme(p.theme);
+  } catch {}
+}
+
+function applyTheme(mode) {
+  theme = mode;
+  if (mode === "light") {
+    document.documentElement.style.setProperty("--bg1", "#f4f7fb");
+    document.documentElement.style.setProperty("--bg2", "#e9eef7");
+    document.documentElement.style.setProperty("--panel", "#f9fbff");
+    document.documentElement.style.setProperty("--panel-2", "#eef4ff");
+    document.documentElement.style.setProperty("--text", "#0c1930");
+    document.documentElement.style.setProperty("--muted", "#3a5c7a");
+    document.body.style.background = "linear-gradient(135deg,#eef4ff,#f9fbff)";
+    themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i> وضع داكن';
+  } else {
+    document.documentElement.style.setProperty("--bg1", "#0b0f14");
+    document.documentElement.style.setProperty("--bg2", "#111826");
+    document.documentElement.style.setProperty("--panel", "#0f141d");
+    document.documentElement.style.setProperty("--panel-2", "#141c29");
+    document.documentElement.style.setProperty("--text", "#f5f8ff");
+    document.documentElement.style.setProperty("--muted", "#aee7ff");
+    document.body.style.background = "";
+    themeBtn.innerHTML = '<i class="fa-solid fa-moon"></i> وضع فاتح';
+  }
+  savePrefs();
+}
+
+function fmtDate(d) {
+  const dd = new Date(d);
+  const pad = n => String(n).padStart(2, "0");
+  return `${dd.getFullYear()}-${pad(dd.getMonth() + 1)}-${pad(dd.getDate())} ${pad(dd.getHours())}:${pad(dd.getMinutes())}`;
+}
+
+/* =========================================================
+   🗃️ الرسم والصفحات لقائمة القنوات
+   ========================================================= */
+function renderChannelsPaged(channels, page = 0) {
+  channelList.innerHTML = "";
+  const totalPages = Math.max(1, Math.ceil(channels.length / pageSize));
+  if (page < 0) page = 0;
+  if (page >= totalPages) page = totalPages - 1;
+  currentPage = page;
+  const start = page * pageSize;
+  const end = Math.min(start + pageSize, channels.length);
+  const slice = channels.slice(start, end);
+  for (let i = 0; i < slice.length; i++) {
+    const ch = slice[i];
+    const div = document.createElement("div");
+    div.className = "channel" + (selectedChannels.has(ch.url) ? " selected" : "");
+    const num = document.createElement("div");
+    num.className = "channel-number";
+    num.textContent = start + i + 1;
+    const nameWrap = document.createElement("div");
+    const name = document.createElement("div");
+    name.className = "channel-name" + (ch.expired ? " channel-expired" : "");
+    name.textContent = ch.name + (ch.expired ? " (لقد انتهت صلاحية القناة)" : "");
+    const meta = document.createElement("div");
+    meta.className = "channel-meta";
+    meta.textContent = (ch.tags || "").slice(0, 60);
+    nameWrap.appendChild(name);
+    if (ch.tags) nameWrap.appendChild(meta);
+    const actions = document.createElement("div");
+    actions.className = "channel-actions";
+    const moveInput = document.createElement("input");
+    moveInput.type = "number";
+    moveInput.className = "channel-move";
+    moveInput.min = 1;
+    moveInput.max = channels.length;
+    moveInput.value = start + i + 1;
+    moveInput.addEventListener("change", () => {
+      const newIndex = parseInt(moveInput.value) - 1;
+      if (newIndex >= 0 && newIndex < allChannels.length) {
+        const realIndex = start + i;
+        const chObj = allChannels.splice(realIndex, 1)[0];
+        allChannels.splice(newIndex, 0, chObj);
+        saveAll();
+        renderChannelsPaged(allChannels, currentPage);
+      }
+    });
+    actions.appendChild(moveInput);
+    div.appendChild(num);
+    div.appendChild(nameWrap);
+    div.appendChild(actions);
+    div.addEventListener("click", () => {
+      if (selectMode) {
+        if (selectedChannels.has(ch.url)) {
+          selectedChannels.delete(ch.url);
+          div.classList.remove("selected");
+        } else {
+          selectedChannels.add(ch.url);
+          div.classList.add("selected");
+        }
+      } else {
+        playChannelByUrl(ch.url);
+      }
+    });
+    div.addEventListener("dblclick", () => {
+      playChannelByUrl(ch.url);
+      if (!document.fullscreenElement) { tv.requestFullscreen(); tv.classList.add("fullscreen"); }
+    });
+    channelList.appendChild(div);
+  }
+  totalBadge.textContent = channels.length + " قناة";
+  const ok = channels.filter(c => !c.expired).length;
+  const bad = channels.filter(c => c.expired).length;
+  statOk.textContent = ok;
+  statBad.textContent = bad;
+  renderPagination(channels.length);
+}
+
+function renderPagination(totalItems) {
+  paginationEl.innerHTML = "";
+  const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+  const maxButtons = 7;
+  const start = Math.max(0, Math.min(currentPage - Math.floor(maxButtons / 2), totalPages - maxButtons));
+  const end = Math.min(totalPages, start + maxButtons);
+  const prev = document.createElement("button");
+  prev.textContent = "«";
+  prev.disabled = currentPage === 0;
+  prev.addEventListener("click", () => { renderChannelsPaged(allChannels, currentPage - 1); });
+  paginationEl.appendChild(prev);
+  for (let i = start; i < end; i++) {
+    const b = document.createElement("button");
+    b.textContent = (i + 1);
+    if (i === currentPage) b.classList.add("active");
+    b.addEventListener("click", ((pageIndex) => { return () => renderChannelsPaged(allChannels, pageIndex); })(i));
+    paginationEl.appendChild(b);
+  }
+  const next = document.createElement("button");
+  next.textContent = "»";
+  next.disabled = currentPage === totalPages - 1;
+  next.addEventListener("click", () => { renderChannelsPaged(allChannels, currentPage + 1); });
+  paginationEl.appendChild(next);
+}
+
+/* =========================================================
+   🏷️ تراكب اسم القناة — يظهر 5 ثواني ويختفي
+   - يتم استدعاؤه عند تشغيل قناة جديدة
+   - يظهر أيضًا عند النقر على الفيديو
+   ========================================================= */
+
+/* دالة داخلية لبدء المؤقت وإظهار العنوان */
+function showOverlayTitle() {
+  overlayTitle.style.display = "block";     // إظهار العنصر
+  overlayTitle.style.opacity = "1";         // تأكيد ظهور
+  clearTimeout(overlayTimeout);             // إلغاء أي مؤقت سابق
+  overlayTimeout = setTimeout(() => {
+    overlayTitle.style.opacity = "0";       // تلاشي بسيط
+    // بعد تلاشي قصير نخفيه تمامًا
+    setTimeout(() => { overlayTitle.style.display = "none"; }, 200);
+  }, 5000); // ⏱️ يخفي بعد 5 ثواني
+}
+
+/* ⚠️ تم "استبدال" الدالة القديمة بنفس الاسم لتتضمن الإظهار المؤقت */
+function updateOverlayTitle(txt) {
+  overlayTitle.textContent = txt || "قناة";
+  showOverlayTitle(); // ✅ يُظهر 5 ثواني ثم يختفي
+}
+
+/* =========================================================
+   ▶️ تشغيل القنوات وإدارة HLS والجودة
+   ========================================================= */
+function updatePlayButtonIcon() { playBtn.innerHTML = video.paused ? '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>'; }
+function updateMuteIcon() { muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>'; }
+
+function playChannelByUrl(url) {
+  const index = allChannels.findIndex(ch => ch.url === url);
+  if (index !== -1) playChannel(index);
+}
+
+function playChannel(i) {
+  if (i < 0 || i >= allChannels.length) return;
+  currentIndex = i;
+  const ch = allChannels[i];
+
+  // 🟦 تحديث الحالة واسم القناة (مع مؤقت 5 ثواني)
+  statusEl.textContent = "جاري تشغيل: " + (ch.name || ch.url);
+  updateOverlayTitle(ch.name || ch.url); // ✅ سيظهر ويختفي تلقائيًا
+
+  // تدمير أي HLS سابق
+  if (hls) { try { hls.destroy(); } catch (e) { } hls = null; }
+
+  // تشغيل عبر Hls.js إن كان مدعومًا
+  if (Hls.isSupported()) {
+    hls = new Hls();
+    hls.loadSource(ch.url);
+    hls.attachMedia(video);
+
+    // عند تحميل المانيفيست نملأ خيارات الجودة
+    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+      qualitySelect.innerHTML = "";
+      fsQualitySelect.innerHTML = "";
+      const autoOption = document.createElement("option");
+      autoOption.value = "auto"; autoOption.text = "Auto";
+      qualitySelect.appendChild(autoOption);
+      fsQualitySelect.appendChild(autoOption.cloneNode(true));
+      hls.levels.forEach((level, i) => {
+        const o = document.createElement("option");
+        o.value = i;
+        o.text = level.height ? level.height + "p" : "Unknown";
+        qualitySelect.appendChild(o);
+        fsQualitySelect.appendChild(o.cloneNode(true));
+      });
+      statQuality.textContent = (qualitySelect.selectedOptions[0]?.text) || "Auto";
+    });
+
+    // نحاول أيضًا جلب النص الخام للمساعدة في البحث السريع داخل المانيفيست
+    fetch(ch.url).then(response => response.text()).then(text => { ch.m3u8Content = text; saveAll(); }).catch(() => { });
+
+    // أخطاء قاتلة → تعليم القناة أنها انتهت الصلاحية
+    hls.on(Hls.Events.ERROR, function (_evt, data) {
+      if (data && data.fatal) {
+        markExpired(ch.url);
+        showAlert("تعذر تشغيل القناة: لقد انتهت صلاحية القناة");
+        statusEl.textContent = "انتهت صلاحية القناة: " + (ch.name || ch.url);
+      }
+    });
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    // سفاري
+    video.src = ch.url;
+  } else {
+    // محاولات عامة
+    video.src = ch.url;
+  }
+
+  video.play().catch(() => { /* تجاهل منع التشغيل التلقائي */ });
+  updatePlayButtonIcon();
+  saveAll();
+}
+
+function markExpired(url) {
+  const ch = allChannels.find(c => c.url === url);
+  if (ch) {
+    ch.expired = true;
+    saveAll();
+    renderChannelsPaged(allChannels, currentPage);
+  }
+}
+
+/* تبديل الجودة (عادي وملء الشاشة) */
+qualitySelect.addEventListener("change", function () {
+  if (!hls) return;
+  hls.currentLevel = this.value === "auto" ? -1 : parseInt(this.value);
+  statQuality.textContent = (qualitySelect.selectedOptions[0]?.text) || "Auto";
+});
+fsQualitySelect.addEventListener("change", function () {
+  qualitySelect.value = this.value;
+  qualitySelect.dispatchEvent(new Event("change"));
+});
+
+/* بحث داخل القنوات المحفوظة (بالاسم أو بالرابط أو بمحتوى الـ m3u8) */
+searchInput.addEventListener("input", () => {
+  const q = searchInput.value.trim().toLowerCase();
+  if (!q) { renderChannelsPaged(allChannels); } else {
+    renderChannelsPaged(allChannels.filter(ch =>
+      (ch.name || "").toLowerCase().includes(q) ||
+      (ch.url || "").toLowerCase().includes(q) ||
+      (ch.m3u8Content || "").toLowerCase().includes(q)
+    ));
+  }
+});
+
+/* =========================================================
+   🧪 فحص الروابط بسرعة وخفة قبل الاختبار الحقيقي
+   ========================================================= */
+function createTempVideo() {
+  const v = document.createElement("video");
+  v.muted = true;
+  return v;
+}
+
+async function testHls(url, timeoutMs = 8000) {
+  return new Promise((resolve) => {
+    const v = createTempVideo();
+    let tempHls = null;
+    let done = false;
+    const finish = (ok) => { if (done) return; done = true; try { tempHls && tempHls.destroy(); } catch (e) { } resolve(ok); };
+    const timer = setTimeout(() => finish(false), timeoutMs);
+    if (Hls.isSupported()) {
+      tempHls = new Hls({ autoStartLoad: false });
+      tempHls.on(Hls.Events.MANIFEST_PARSED, () => { clearTimeout(timer); finish(true); });
+      tempHls.on(Hls.Events.ERROR, (_e, data) => { if (data && data.fatal) { clearTimeout(timer); finish(false); } });
+      try {
+        tempHls.loadSource(url);
+        tempHls.attachMedia(v);
+      } catch (e) { clearTimeout(timer); finish(false); }
+    } else if (v.canPlayType("application/vnd.apple.mpegurl")) {
+      v.src = url;
+      v.addEventListener("loadedmetadata", () => { clearTimeout(timer); finish(true); }, { once: true });
+      v.addEventListener("error", () => { clearTimeout(timer); finish(false); }, { once: true });
+    } else { clearTimeout(timer); finish(false); }
+  });
+}
+
+async function isUrlLikelyReachable(u) {
+  try { await fetch(u, { method: "HEAD", mode: "no-cors", cache: "no-cache", redirect: "follow" }); return true; } catch { return false; }
+}
+
+async function batchTestCandidates(candidates, limit = MAX_CHANNELS, concurrency = TEST_CONCURRENCY) {
+  const results = [];
+  const queue = candidates.slice();
+  const workers = new Array(concurrency).fill(0).map(async () => {
+    while (queue.length > 0 && results.length < limit) {
+      const ch = queue.shift();
+      try {
+        const lightOk = await isUrlLikelyReachable(ch.url);
+        if (!lightOk) continue;
+        const ok = await testHls(ch.url);
+        if (ok) results.push(ch);
+      } catch (e) { }
+    }
+  });
+  await Promise.all(workers);
+  return results;
+}
+
+/* =========================================================
+   📥 تحميل من ملف، رابط، إدارة الحفظ والتصدير
+   ========================================================= */
+fileInput.addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e2 => {
+    const incoming = parseM3UToArray(e2.target.result);
+    let stored = [];
+    try { stored = JSON.parse(localStorage.getItem("m3uChannels") || "[]"); } catch { stored = []; }
+    let combined = mergeChannels(stored, incoming);
+    combined = deduplicateChannels(combined);
+    if (combined.length > MAX_CHANNELS) { combined = pickRandomChannels(combined, MAX_CHANNELS); }
+    allChannels = combined;
+    saveAll();
+    renderChannelsPaged(allChannels, 0);
+    if (allChannels.length > 0) playChannel(0);
+    statusEl.textContent = "تمت إضافة قنوات من الملف. المحفوظ الآن: " + allChannels.length;
+    statUpdated.textContent = fmtDate(Date.now());
+    showAlert("تم تحميل ملف M3U بنجاح", "success");
+  };
+  reader.readAsText(file);
+  fileInput.value = "";
+});
+
+loadLinkBtn.addEventListener("click", async () => {
+  const url = linkInput.value.trim();
+  if (!url) { showAlert("يرجى إدخال رابط صحيح", "warning"); return; }
+  try {
+    statusEl.textContent = "جاري تحميل الرابط...";
+    const res = await fetch(url);
+    if (!res.ok) throw new Error();
+    const text = await res.text();
+    const incoming = parseM3UToArray(text);
+    let stored = [];
+    try { stored = JSON.parse(localStorage.getItem("m3uChannels") || "[]"); } catch { stored = []; }
+    let combined = mergeChannels(stored, incoming);
+    combined = deduplicateChannels(combined);
+    if (combined.length > MAX_CHANNELS) { combined = pickRandomChannels(combined, MAX_CHANNELS); }
+    allChannels = combined;
+    saveAll();
+    renderChannelsPaged(allChannels, 0);
+    if (allChannels.length > 0) playChannel(0);
+    statusEl.textContent = "تمت إضافة قنوات من الرابط. المحفوظ الآن: " + allChannels.length;
+    statUpdated.textContent = fmtDate(Date.now());
+    showAlert("تم إضافة القنوات من الرابط", "success");
+  } catch {
+    showAlert("فشل تحميل الرابط", "warning");
+    statusEl.textContent = "فشل تحميل الرابط";
+  }
+});
+
+function clearChannels() {
+  allChannels = [];
+  selectedChannels.clear();
+  renderChannelsPaged(allChannels, 0);
+  localStorage.removeItem("m3uChannels");
+  statusEl.textContent = "تم مسح القنوات المحفوظة.";
+  statUpdated.textContent = fmtDate(Date.now());
+  showAlert("تم مسح جميع القنوات", "warning");
+}
+clearBtn.addEventListener("click", clearChannels);
+
+exportBtn.addEventListener("click", () => {
+  let m3u = "#EXTM3U\n";
+  allChannels.forEach(ch => { m3u += `#EXTINF:-1,${ch.name}\n${ch.url}\n`; });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([m3u], { type: "audio/x-mpegurl" }));
+  a.download = "channels.m3u";
+  a.click();
+  showAlert("تم حفظ ملف M3U", "success");
+});
+
+/* =========================================================
+   ⏯️ أزرار التشغيل/الإيقاف، كتم الصوت، التالي/السابق
+   ========================================================= */
+playBtn.addEventListener("click", () => { if (video.paused) video.play(); else video.pause(); updatePlayButtonIcon(); });
+video.addEventListener("play", updatePlayButtonIcon);
+video.addEventListener("pause", updatePlayButtonIcon);
+
+muteBtn.addEventListener("click", () => { video.muted = !video.muted; updateMuteIcon(); savePrefs(); });
+
+prevBtn.addEventListener("click", () => { if (allChannels.length === 0) return; const idx = (currentIndex - 1 + allChannels.length) % allChannels.length; playChannel(idx); });
+nextBtn.addEventListener("click", () => { if (allChannels.length === 0) return; const idx = (currentIndex + 1) % allChannels.length; playChannel(idx); });
+
+/* =========================================================
+   🧪 فحص صلاحية القنوات دفعة واحدة
+   ========================================================= */
+checkLinksBtn.addEventListener("click", async () => {
+  if (allChannels.length === 0) { showAlert("لا توجد قنوات لفحصها"); return; }
+  statusEl.textContent = "جاري فحص القنوات تدريجياً...";
+  let bad = 0, ok = 0;
+  const candidates = allChannels.slice();
+  const queue = candidates.slice();
+  const workers = new Array(TEST_CONCURRENCY).fill(0).map(async () => {
+    while (queue.length > 0) {
+      const ch = queue.shift();
+      try {
+        const lightOk = await isUrlLikelyReachable(ch.url);
+        let okPlay = false;
+        if (lightOk) okPlay = await testHls(ch.url);
+        ch.expired = !okPlay;
+        if (ch.expired) bad++; else ok++;
+      } catch { ch.expired = true; bad++; }
+    }
+  });
+  await Promise.all(workers);
+  renderChannelsPaged(allChannels, currentPage);
+  saveAll();
+  statusEl.textContent = "انتهى فحص القنوات.";
+  statUpdated.textContent = fmtDate(Date.now());
+  showAlert(`نتيجة الفحص: ${ok} صالحة / ${bad} منتهية`, bad ? undefined : "success");
+});
+
+/* =========================================================
+   🗑️ وضع التحديد والحذف
+   ========================================================= */
+deleteSelectedBtn.addEventListener("click", () => {
+  if (selectedChannels.size === 0) { showAlert("لم يتم تحديد قنوات"); return; }
+  allChannels = allChannels.filter(ch => !selectedChannels.has(ch.url));
+  selectedChannels.clear();
+  renderChannelsPaged(allChannels, 0);
+  saveAll();
+  statusEl.textContent = "تم حذف القنوات المحددة. المحفوظ الآن: " + allChannels.length;
+  statUpdated.textContent = fmtDate(Date.now());
+  showAlert("تم حذف القنوات المحددة", "warning");
+});
+
+selectModeBtn.addEventListener("click", () => {
+  selectMode = !selectMode;
+  selectModeBtn.classList.toggle("green", selectMode);
+  selectModeBtn.classList.toggle("blue", !selectMode);
+  selectModeBtn.textContent = selectMode ? "إلغاء التحديد" : "تحديد القنوات";
+  if (!selectMode) selectedChannels.clear();
+  renderChannelsPaged(allChannels, currentPage);
+});
+
+/* =========================================================
+   ⛶ عناصر تحكم ملء الشاشة وإظهارها مؤقتًا
+   ========================================================= */
+function showFsControls() {
+  fullscreenControls.classList.remove("hide");
+  if (fsControlsTimeout) clearTimeout(fsControlsTimeout);
+  fsControlsTimeout = setTimeout(() => { fullscreenControls.classList.add("hide"); }, 4200);
+}
+function hideFsControls() {
+  fullscreenControls.classList.add("hide");
+  if (fsControlsTimeout) clearTimeout(fsControlsTimeout);
+}
+fullscreenBtn.addEventListener("click", () => {
+  if (!document.fullscreenElement) { tv.requestFullscreen(); tv.classList.add("fullscreen"); showFsControls(); } else { document.exitFullscreen(); tv.classList.remove("fullscreen"); hideFsControls(); }
+});
+exitFsBtn.addEventListener("click", () => { document.exitFullscreen(); tv.classList.remove("fullscreen"); hideFsControls(); });
+fsPrevBtn.addEventListener("click", () => prevBtn.click());
+fsNextBtn.addEventListener("click", () => nextBtn.click());
+fsFillBtn.addEventListener("click", () => {
+  video.style.objectFit = (video.style.objectFit === "fill") ? "contain" : "fill";
+  fitToggle.checked = video.style.objectFit === "fill";
+  fitLabel.textContent = video.style.objectFit === "fill" ? "ملء" : "احتواء";
+  savePrefs();
+});
+
+/* ✅ عند النقر على الفيديو:
+   - لو في وضع ملء الشاشة: نظهر شريط التحكم الخاص بملء الشاشة
+   - في كل الأحوال: نظهر اسم القناة 5 ثواني */
+video.addEventListener("click", () => {
+  if (tv.classList.contains("fullscreen")) showFsControls();
+  showOverlayTitle(); // ✅ إظهار اسم القناة 5 ثواني
+});
+
+/* =========================================================
+   🔊 الصوت/السرعة/الملء-الاحتواء/الحجم/الثيم/إعادة الضبط
+   ========================================================= */
+volSlider.addEventListener("input", () => { video.volume = parseFloat(volSlider.value); volVal.textContent = Math.round(video.volume * 100) + "%"; savePrefs(); });
+playbackRate.addEventListener("change", () => { video.playbackRate = parseFloat(playbackRate.value); savePrefs(); });
+fitToggle.addEventListener("change", () => { video.style.objectFit = fitToggle.checked ? "fill" : "contain"; fitLabel.textContent = fitToggle.checked ? "ملء" : "احتواء"; savePrefs(); });
+uiScale.addEventListener("change", () => { document.body.style.setProperty("transform", `scale(${uiScale.value})`); document.body.style.transformOrigin = "top center"; savePrefs(); });
+themeBtn.addEventListener("click", () => { applyTheme(theme === "dark" ? "light" : "dark"); });
+resetState.addEventListener("click", () => {
+  localStorage.removeItem("m3uChannels");
+  localStorage.removeItem("iptv_prefs");
+  showAlert("تمت إعادة الضبط، أعد تحميل الصفحة من فضلك", "warning");
+});
+
+/* =========================================================
+   🌐 تحميل عيّنات من iptv-org (10 قنوات، بحث، عدد مخصّص)
+   ========================================================= */
+async function loadTenFromIptvOrg() {
+  try {
+    statusEl.textContent = "جاري تحميل القوائم من iptv-org...";
+    const masterUrl = "https://iptv-org.github.io/iptv/index.m3u";
+    const res = await fetch(masterUrl);
+    if (!res.ok) throw new Error();
+    const text = await res.text();
+    if (masterCache.length === 0) { masterCache = parseM3UToArray(text).filter(ch => /\.m3u8?(\?|$)/i.test(ch.url)); }
+    const shuffled = shuffle(masterCache);
+    let stored = [];
+    try { stored = JSON.parse(localStorage.getItem("m3uChannels") || "[]"); } catch { stored = []; }
+    const storedUrls = new Set(stored.map(ch => ch.url));
+    const newOnes = [];
+    for (const ch of shuffled) {
+      if (newOnes.length >= 10) break;
+      if (storedUrls.has(ch.url)) continue;
+      const lightOk = await isUrlLikelyReachable(ch.url);
+      if (lightOk) {
+        const ok = await testHls(ch.url);
+        if (ok) { newOnes.push(ch); storedUrls.add(ch.url); }
+      }
+    }
+    let combined = mergeChannels(stored, newOnes);
+    combined = deduplicateChannels(combined);
+    if (combined.length > MAX_CHANNELS) combined = pickRandomChannels(combined, MAX_CHANNELS);
+    allChannels = combined;
+    saveAll();
+    renderChannelsPaged(allChannels, 0);
+    statusEl.textContent = "المحفوظ الآن: " + allChannels.length + " (تمت الإضافة: " + newOnes.length + ")";
+    statUpdated.textContent = fmtDate(Date.now());
+    if (allChannels.length > 0 && stored.length === 0) playChannel(0);
+    showAlert(`تم تحميل ${newOnes.length} قناة صالحة من iptv-org`, "success");
+  } catch {
+    statusEl.textContent = "تعذر تحميل القنوات الجديدة";
+    showAlert("تعذر تحميل القنوات الجديدة", "warning");
+  }
+}
+loadTenBtn.addEventListener("click", loadTenFromIptvOrg);
+
+fsSearchInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { fsSearchBtn.click(); } });
+fsSearchInput.addEventListener("keypress", (e) => { if (e.key === "Enter") { e.preventDefault(); fsSearchBtn.click(); } });
+fsSearchBtn.addEventListener("click", () => { const q = (fsSearchInput.value || "").trim(); searchAndAddFromIptvOrg(q, 50); });
+
+async function searchAndAddFromIptvOrg(query, limit = 10) {
+  if (!query) { showAlert("أدخل عبارة للبحث", "warning"); return; }
+  try {
+    statusEl.textContent = `جاري البحث عن قنوات مطابقة لـ "${query}" ...`;
+    const masterUrl = "https://iptv-org.github.io/iptv/index.m3u";
+    const res = await fetch(masterUrl);
+    if (!res.ok) throw new Error("فشل جلب القائمة الرئيسية");
+    const text = await res.text();
+    if (masterCache.length === 0) { masterCache = parseM3UToArray(text).filter(ch => /\.m3u8?(\?|$)/i.test(ch.url)); }
+    const lowered = query.toLowerCase();
+    const found = masterCache.filter(ch => (ch.name || "").toLowerCase().includes(lowered) || (ch.url || "").toLowerCase().includes(lowered));
+    if (found.length === 0) { statusEl.textContent = `لا توجد نتائج لـ "${query}"`; showAlert(`لا توجد نتائج صالحة لـ "${query}"`); return; }
+    statusEl.textContent = `وجدت ${found.length} نتيجة، جارٍ الفحص...`;
+    const candidates = found.slice();
+    const reachable = await batchTestCandidates(candidates, limit, TEST_CONCURRENCY);
+    if (reachable.length === 0) { statusEl.textContent = `لم يتم العثور على قنوات قابلة للتشغيل لـ "${query}".`; showAlert(`لا توجد نتائج صالحة لـ "${query}"`); statUpdated.textContent = fmtDate(Date.now()); return; }
+    let combined = mergeChannels(allChannels, reachable);
+    combined = deduplicateChannels(combined);
+    if (combined.length > MAX_CHANNELS) combined = pickRandomChannels(combined, MAX_CHANNELS);
+    const addedCount = Math.max(0, combined.length - allChannels.length);
+    allChannels = combined;
+    saveAll();
+    renderChannelsPaged(allChannels, 0);
+    statusEl.textContent = `تمت إضافة ${addedCount} قناة مطابقة لـ "${query}". المحفوظ الآن: ${allChannels.length}`;
+    statUpdated.textContent = fmtDate(Date.now());
+    if (allChannels.length > 0 && !video.src) playChannel(0);
+    showAlert(`تمت إضافة ${addedCount} قناة`, "success");
+  } catch {
+    statusEl.textContent = "فشل في البحث عن القنوات.";
+    showAlert("فشل في البحث عن القنوات", "warning");
+  }
+}
+
+/* =========================================================
+   🚀 عند تحميل الصفحة: استرجاع القنوات والتفضيلات
+   ========================================================= */
+window.addEventListener("load", async () => {
+  try { const stored = JSON.parse(localStorage.getItem("m3uChannels") || "[]"); allChannels = Array.isArray(stored) ? stored : []; } catch { allChannels = []; }
+  loadPrefs();
+  volSlider.value = video.volume;
+  volVal.textContent = Math.round(video.volume * 100) + "%";
+  renderChannelsPaged(allChannels, 0);
+  if (allChannels.length > 0) { playChannel(0); statusEl.textContent = `جاهز. المحفوظ الآن: ${allChannels.length}`; } else { statusEl.textContent = "جاهز"; }
+});
+
+/* =========================================================
+   🎲 تحميل عدد عشوائي مخصص من iptv-org
+   ========================================================= */
+fsLoadNum.addEventListener("change", async () => {
+  const num = parseInt(fsLoadNum.value);
+  if (!num || num < 1) return;
+  try {
+    statusEl.textContent = "جاري تحميل " + num + " قناة عشوائية...";
+    const masterUrl = "https://iptv-org.github.io/iptv/index.m3u";
+    const res = await fetch(masterUrl);
+    if (!res.ok) throw new Error();
+    const text = await res.text();
+    if (masterCache.length === 0) { masterCache = parseM3UToArray(text).filter(ch => /\.m3u8?(\?|$)/i.test(ch.url)); }
+    const shuffled = shuffle(masterCache);
+    let stored = [];
+    try { stored = JSON.parse(localStorage.getItem("m3uChannels") || "[]"); } catch { stored = []; }
+    const storedUrls = new Set(stored.map(ch => ch.url));
+    const newOnes = [];
+    for (const ch of shuffled) {
+      if (newOnes.length >= num) break;
+      if (storedUrls.has(ch.url)) continue;
+      const lightOk = await isUrlLikelyReachable(ch.url);
+      if (lightOk) {
+        const ok = await testHls(ch.url);
+        if (ok) { newOnes.push(ch); storedUrls.add(ch.url); }
+      }
+    }
+    let combined = mergeChannels(stored, newOnes);
+    combined = deduplicateChannels(combined);
+    if (combined.length > MAX_CHANNELS) combined = pickRandomChannels(combined, MAX_CHANNELS);
+    allChannels = combined;
+    saveAll();
+    renderChannelsPaged(allChannels, 0);
+    statusEl.textContent = "المحفوظ الآن: " + allChannels.length + " (تمت الإضافة: " + newOnes.length + ")";
+    statUpdated.textContent = fmtDate(Date.now());
+    if (allChannels.length > 0 && stored.length === 0) playChannel(0);
+    showAlert(`تم تحميل ${newOnes.length} قناة`, "success");
+  } catch {
+    statusEl.textContent = "تعذر تحميل القنوات الجديدة";
+    showAlert("تعذر تحميل القنوات الجديدة", "warning");
+  }
+});
+
+/* =========================================================
+   ⌨️ اختصارات لوحة المفاتيح
+   ========================================================= */
+document.addEventListener("keydown", (e) => {
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes((e.target.tagName || '').toUpperCase())) return;
+  if (e.code === "Space") { e.preventDefault(); playBtn.click(); }
+  if (e.key === "ArrowRight") { nextBtn.click(); }
+  if (e.key === "ArrowLeft") { prevBtn.click(); }
+  if (e.key.toLowerCase() === "f") { fullscreenBtn.click(); }
+  if (e.key.toLowerCase() === "m") { muteBtn.click(); }
+  if (e.key === "+") { video.volume = Math.min(1, video.volume + 0.05); volSlider.value = video.volume; volVal.textContent = Math.round(video.volume * 100) + "%"; savePrefs(); }
+  if (e.key === "-") { video.volume = Math.max(0, video.volume - 0.05); volSlider.value = video.volume; volVal.textContent = Math.round(video.volume * 100) + "%"; savePrefs(); }
+});
+
+/* مزامنة شريط الصوت لو تغيّر من أي مكان */
+video.addEventListener("volumechange", () => { volSlider.value = video.volume; volVal.textContent = Math.round(video.volume * 100) + "%"; });
+  </script>
+</body>
+</html>
